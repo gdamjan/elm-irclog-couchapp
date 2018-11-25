@@ -69,9 +69,18 @@ view model =
         Success row ->
             div [] [
                 div [] [ text <| "#" ++ row.channel ],
+                timestamp row.timestamp,
+                Html.br [] [],
                 nickname row.sender,
                 span [] [ text row.message ]
             ]
+
+
+timestamp: Time.Posix -> Html.Html msg
+timestamp t =
+    (Time.posixToMillis t |> toFloat) / 1000
+    |> String.fromFloat
+    |> text
 
 
 nickname : String -> Html.Html msg
