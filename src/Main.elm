@@ -1,5 +1,8 @@
+import Identicon
+import Color
 import Browser
 import Html exposing (Html, text, div, span)
+import Html.Attributes exposing (style)
 import Http
 import Time
 import Json.Decode as Decode
@@ -66,9 +69,22 @@ view model =
         Success row ->
             div [] [
                 div [] [ text <| "#" ++ row.channel ],
-                span [] [ text <| row.sender ++ ": "],
+                nickname row.sender,
                 span [] [ text row.message ]
             ]
+
+
+nickname : String -> Html.Html msg
+nickname sender =
+    let
+        css = [
+            style "padding" "1px 2px",
+            style "margin" "0 4px",
+            style "color" "black",
+            style "background-color" (Identicon.defaultColor sender |> Color.toCssString)
+            ]
+    in
+        span css [text <| sender ++ ": "]
 
 
 getRow id =
