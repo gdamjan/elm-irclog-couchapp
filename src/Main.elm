@@ -78,7 +78,9 @@ view model =
 
 timestamp: Time.Posix -> Html.Html msg
 timestamp t =
-    (Time.posixToMillis t |> toFloat) / 1000
+    Time.posixToMillis t
+    |> toFloat
+    |> (\f -> f / 1000)
     |> String.fromFloat
     |> text
 
