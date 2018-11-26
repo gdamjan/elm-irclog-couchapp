@@ -4,8 +4,10 @@ import Browser
 import Html exposing (Html, text, div, span)
 import Html.Attributes exposing (style)
 import Http
+import Task
 import Time
 import Json.Decode as Decode
+
 
 main =
   Browser.element
@@ -135,10 +137,33 @@ nickname sender =
 
 
 getRow id =
-    Http.get
-        { url = "https://irc.softver.org.mk/api/" ++ id
-        , expect = Http.expectJson GotRow rowDecoder
+    Http.task
+        { method = "GET"
+        , url = "https://irc.softver.org.mk/api/" ++ id
+        , headers = [Http.header "Accept" "application/json"]
+        , body = Http.emptyBody
+        , timeout = Just 10000 -- miliseconds
+        , resolver = Http.stringResolver resolver
         }
+    |> Task.attempt GotRow
+
+resolver response =
+    case response of
+        Http.BadUrl_ url ->
+          Err (Http.BadUrl url)
+
+        Http.Timeout_ ->
+          Err Http.Timeout
+
+        Http.NetworkError_ ->
+          Err Http.NetworkError
+
+        Http.BadStatus_ metadata body ->
+          Err (Http.BadStatus metadata.statusCode)
+
+        Http.GoodStatus_ meta body ->
+          Decode.decodeString rowDecoder body
+          |> Result.mapError (\e -> Decode.errorToString e |> Http.BadBody )
 
 rowDecoder : Decode.Decoder (Row)
 rowDecoder =
