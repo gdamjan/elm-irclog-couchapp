@@ -1,0 +1,17 @@
+dist: xenial
+language: elm
+elm: 0.19.0
+
+script: elm make src/Main.elm # override the default script cause I hate elm-format
+
+before_deploy:
+  - elm make src/Main.elm --output=dist/index.html --optimize
+
+deploy:
+  skip_cleanup: true
+  local-dir: dist/
+  provider: pages
+  keep-history: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  on:
+    branch: master
