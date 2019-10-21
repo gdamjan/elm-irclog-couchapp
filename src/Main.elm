@@ -1,3 +1,5 @@
+module Main exposing (..)
+
 import Identicon
 import Color
 import Browser

@@ -1,6 +1,8 @@
 dist: xenial
 language: elm
-elm: 0.19.0
+elm: latest-0.19.1
+elm_test: 0.19.1
+elm_format: 0.8.2
 
 script: elm make src/Main.elm # override the default script cause I hate elm-format
 
