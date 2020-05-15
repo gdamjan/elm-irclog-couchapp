@@ -1,6 +1,7 @@
-module View exposing (..)
+module View exposing (view)
 
-import Html exposing (Html, text, div, span)
+import Browser
+import Html exposing (text, div, span)
 import Html.Attributes exposing (style)
 import Identicon
 import Color
@@ -8,29 +9,31 @@ import Time
 
 import Model exposing (Model(..))
 
-view : Model -> Html msg
+view : Model -> Browser.Document msg
 view model =
     case model of
         Loading ->
-            text "Loading..."
+            { title = "Loading…", body = [ text "Loading…" ] }
 
         Failure ->
-            text "I was unable to load your book."
+            { title = "Failure", body = [ text "I was unable to load your book." ] }
 
         Success row ->
             let
                 z = Time.utc
             in
-                div [] [
-                    div [] [ text <| "#" ++ row.channel ],
-                    div [] [ text <| toIsoDate z row.timestamp ],
-                    div [] [
-                        span [] [ text <| toIsoTime z row.timestamp ],
-                        nickname row.sender,
-                        span [] [ text row.message ]
-                    ],
-                    div [] [ text <| timestamp row.timestamp ]
-                ]
+                { title = ""
+                , body = [
+                        div [] [ text <| "#" ++ row.channel ],
+                        div [] [ text <| toIsoDate z row.timestamp ],
+                        div [] [
+                            span [] [ text <| toIsoTime z row.timestamp ],
+                            nickname row.sender,
+                            span [] [ text row.message ]
+                        ],
+                        div [] [ text <| timestamp row.timestamp ]
+                    ]
+                }
 
 
 timestamp: Time.Posix -> String
@@ -83,5 +86,3 @@ nickname sender =
             ]
     in
         span css [text <| sender ++ ": "]
-
-

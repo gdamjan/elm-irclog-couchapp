@@ -11,6 +11,7 @@ type Model
 
 type Msg
   = GotRow (Result Http.Error Row)
+  | None
 
 type alias Row =
     { id : String
